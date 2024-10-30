@@ -1,0 +1,10 @@
+# vector.toml configuration file for Vector
+
+[sources.logs]
+  type = "file"
+  include = ["/var/log/*.log"]
+
+[sinks.out]
+  type = "console"
+  inputs = ["logs"]
+  encoding.codec = "json"
