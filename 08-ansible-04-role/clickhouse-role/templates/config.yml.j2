@@ -1,0 +1,60 @@
+# Основные настройки сервера
+server:
+  log_level: "{{ clickhouse_log_level | default('info') }}"
+  log_path: "/var/log/clickhouse-server/clickhouse-server.log"
+  error_log_path: "/var/log/clickhouse-server/clickhouse-server.err.log"
+  log_size_limit: "1000M"
+  listen_host: "0.0.0.0"
+  http_port: "{{ clickhouse_http_port | default(8123) }}"
+  tcp_port: "{{ clickhouse_tcp_port | default(9000) }}"
+  paths:
+    data_path: "/var/lib/clickhouse/"
+    tmp_path: "/var/lib/clickhouse/tmp/"
+    user_files_path: "/var/lib/clickhouse/user_files/"
+
+# Пользователи и права доступа
+users:
+{% for user in clickhouse_users %}
+  - name: "{{ user.name }}"
+    password: "{{ user.password | default('') }}"
+    networks:
+      allowed_ips: {{ user.allowed_ips | default(['::/0']) }}
+    profile: "{{ user.profile | default('default') }}"
+    quota: "{{ user.quota | default('default') }}"
+{% endfor %}
+
+# Профили ресурсов
+profiles:
+{% for profile in clickhouse_profiles %}
+  - name: "{{ profile.name }}"
+    settings:
+      max_memory_usage: "{{ profile.max_memory_usage | default(10000000000) }}"
+      max_threads: "{{ profile.max_threads | default(4) }}"
+      max_concurrent_queries: "{{ profile.max_concurrent_queries | default(100) }}"
+      load_balancing: "{{ profile.load_balancing | default('random') }}"
+{% endfor %}
+
+# Лимиты по квотам для пользователей
+quotas:
+{% for quota in clickhouse_quotas %}
+  - name: "{{ quota.name }}"
+    intervals:
+      - duration: "{{ quota.duration | default(3600) }}"
+        queries_limit: "{{ quota.queries | default(1000) }}"
+        errors_limit: "{{ quota.errors | default(0) }}"
+{% endfor %}
+
+# Настройки репликации и шардирования (если применимо)
+{% if clickhouse_replication %}
+zookeeper:
+  nodes:
+{% for node in clickhouse_zookeeper_nodes %}
+    - host: "{{ node.host }}"
+      port: "{{ node.port }}"
+{% endfor %}
+{% endif %}
+
+# Дополнительные настройки сервера
+extra_settings:
+  keep_alive_timeout: "{{ clickhouse_keep_alive_timeout | default(3) }}"
+  max_connections: "{{ clickhouse_max_connections | default(4096) }}"

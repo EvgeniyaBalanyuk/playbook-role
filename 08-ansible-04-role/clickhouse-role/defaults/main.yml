@@ -1,0 +1,5 @@
+clickhouse_version: "21.8.10.19"
+clickhouse_packages:
+  - clickhouse-common-static
+  - clickhouse-client
+  - clickhouse-server
