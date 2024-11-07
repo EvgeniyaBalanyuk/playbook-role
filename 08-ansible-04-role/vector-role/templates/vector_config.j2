@@ -1,0 +1,37 @@
+# Основные настройки сервера Vector
+data_dir: /var/lib/vector
+
+# Глобальные настройки
+{{ vector_global_options | default({}) | to_nice_yaml(indent=2) }}
+
+# Источники данных (sources)
+sources:
+{% for source_name, source in vector_sources.items() %}
+  {{ source_name }}:
+    type: "{{ source.type }}"
+    {% for key, value in source.options.items() %}
+    {{ key }}: {{ value }}
+    {% endfor %}
+{% endfor %}
+
+# Преобразования данных (transforms)
+transforms:
+{% for transform_name, transform in vector_transforms.items() %}
+  {{ transform_name }}:
+    type: "{{ transform.type }}"
+    inputs: [{{ transform.inputs | join(", ") }}]
+    {% for key, value in transform.options.items() %}
+    {{ key }}: {{ value }}
+    {% endfor %}
+{% endfor %}
+
+# Назначения данных (sinks)
+sinks:
+{% for sink_name, sink in vector_sinks.items() %}
+  {{ sink_name }}:
+    type: "{{ sink.type }}"
+    inputs: [{{ sink.inputs | join(", ") }}]
+    {% for key, value in sink.options.items() %}
+    {{ key }}: {{ value }}
+    {% endfor %}
+{% endfor %}

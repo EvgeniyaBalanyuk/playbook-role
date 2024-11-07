@@ -1,0 +1,4 @@
+---
+vector_service_user: "vector" 
+vector_service_group: "vector" 
+vector_repo_url: "https://repositories.timber.io/public/vector/cfg/setup.rpm"  

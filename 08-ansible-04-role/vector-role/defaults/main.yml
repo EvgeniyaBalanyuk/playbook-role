@@ -1,0 +1,4 @@
+---
+vector_version: "0.15.0"  
+vector_download_url: "https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}.rpm"  
+vector_config_template: "vector-config.j2" 
