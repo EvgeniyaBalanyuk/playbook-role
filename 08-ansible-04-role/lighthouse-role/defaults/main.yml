@@ -1,0 +1,4 @@
+---
+lighthouse_version: "1.0.0"
+lighthouse_package: "lighthouse"
+lighthouse_url: "https://packages.lighthouse.com/rpm/stable"

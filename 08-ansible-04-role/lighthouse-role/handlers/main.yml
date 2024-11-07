@@ -1,0 +1,12 @@
+---
+- name: Start lighthouse service
+  become: true
+  ansible.builtin.service:
+    name: lighthouse
+    state: started
+
+- name: Restart lighthouse service
+  become: true
+  ansible.builtin.service:
+    name: lighthouse
+    state: restarted

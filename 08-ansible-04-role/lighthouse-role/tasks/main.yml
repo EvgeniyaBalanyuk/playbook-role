@@ -1,0 +1,27 @@
+---
+- name: Download Lighthouse package
+  block:
+    - name: Download Lighthouse package
+      ansible.builtin.get_url:
+        url: "{{ lighthouse_url }}/{{ lighthouse_package }}-{{ lighthouse_version }}.rpm"
+        dest: "./{{ lighthouse_package }}-{{ lighthouse_version }}.rpm"
+  rescue:
+    - name: Fallback download for Lighthouse package
+      ansible.builtin.get_url:
+        url: "{{ lighthouse_url }}/lighthouse-{{ lighthouse_version }}.rpm"
+        dest: "./lighthouse-{{ lighthouse_version }}.rpm"
+
+- name: Install Lighthouse package
+  become: true
+  ansible.builtin.yum:
+    name: "./{{ lighthouse_package }}-{{ lighthouse_version }}.rpm"
+  notify: Start lighthouse service
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Configure Lighthouse
+  ansible.builtin.template:
+    src: "lighthouse-config.j2"
+    dest: "/etc/lighthouse/lighthouse-config.conf"
+  notify: Restart lighthouse service
